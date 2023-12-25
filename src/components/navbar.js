@@ -158,7 +158,7 @@ export default function Navbar({navDark, manuClass,containerClass}){
                         </Offcanvas.Body>
                         <div className="offcanvas-footer p-4 border-top text-center">
                             <ul className="list-unstyled social-icon social mb-0">
-                                <li className="list-inline-item mb-0"><Link to="https://1.envato.market/doctris-template-react" target="_blank" className="rounded"><FiShoppingCart className="align-middle mb-0"/></Link></li>
+                                <li className="list-inline-item mb-0"><Link to="https://1.envato.market/doctris-react" target="_blank" className="rounded"><FiShoppingCart className="align-middle mb-0"/></Link></li>
                                 <li className="list-inline-item mb-0"><Link to="https://dribbble.com/shreethemes" target="_blank" className="rounded"><FiDribbble className="align-middle mb-0"/></Link></li>
                                 <li className="list-inline-item mb-0"><Link to="https://www.behance.net/shreethemes" target="_blank" className="rounded"><RiBehanceLine className="align-middle mb-0"/></Link></li>
                                 <li className="list-inline-item mb-0"><Link to="https://www.facebook.com/shreethemes" target="_blank" className="rounded"><FaFacebookF className="align-middle mb-0"/></Link></li>
