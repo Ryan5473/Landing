@@ -8,7 +8,7 @@ export default function AdminFooter(){
                 <div className="row align-items-center">
                     <div className="col-sm-6">
                         <div className="text-sm-start text-center">
-                            <p className="mb-0">{new Date().getFullYear()} © Doctris. Design with <i className="mdi mdi-heart text-danger"></i> by <Link to="https://shreethemes.in/" target="_blank" className="text-reset">Shreethemes</Link>.</p>
+                            <p className="mb-0">{new Date().getFullYear()} © Doctris. Design & Develop with <i className="mdi mdi-heart text-danger"></i> by <Link to="https://shreethemes.in/" target="_blank" className="text-reset">Shreethemes</Link>.</p>
                         </div>
                     </div>
 

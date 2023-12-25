@@ -5,6 +5,7 @@ import image1 from  '../../assets/images/doctors/01.jpg'
 
 import Navbar from "../../components/navbar";
 import Sidebar from "../../components/sidebar";
+import AdminFooter from "../../components/dashboard/adminFooter";
 
 export default function DoctorProfileSettimg(){
     return(
@@ -215,6 +216,7 @@ export default function DoctorProfileSettimg(){
                 </div>
             </div>
         </section>
+        <AdminFooter/>
         </>
     )
 }
