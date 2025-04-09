@@ -96,6 +96,11 @@ export default function Navbar({navDark, manuClass,containerClass}){
                 </div>
 
                 <ul className="dropdowns list-inline mb-0">
+                <li className="list-inline-item mb-0">
+  <i className="bi bi-bag-plus fs-3 "></i> {/* fs-1 is biggest, fs-6 is smallest */}
+</li>
+
+
                     <li className="list-inline-item mb-0">
                         <Link to="#"  onClick={handleShowTwo}>
                             <div className="btn btn-icon btn-pills btn-primary"><FiSettings className="fea icon-sm"/></div>
@@ -222,12 +227,8 @@ export default function Navbar({navDark, manuClass,containerClass}){
                 <div id="navigation" style={{ display: isMenu ? 'block' : 'none' }}>
                     <ul className={manuClass}>
                         <li className={`${["", "index","index-two", "index-three"].includes(manu)? "active" : ""} has-submenu parent-menu-item`}>
-                            <Link to="#">Home</Link><span className="menu-arrow"></span>
-                            <ul className="submenu">
-                                <li className={manu === "index" || "" ? "active" : ""}><Link to="/index" className="sub-menu-item">Index One</Link></li>
-                                <li className={manu === "index-two" ? "active" : ""}><Link to="/index-two" className="sub-menu-item">Index Two</Link></li>
-                                <li className={manu === "index-three" ? "active" : ""}><Link to="/index-three" className="sub-menu-item">Index Three</Link></li>
-                            </ul>
+                            <Link to="/index-two" >Home</Link><span></span>
+                         
                         </li>
 
                         <li className={`${["doctor-dashboard", "doctor-appointment","patient-list", "doctor-schedule","invoices","patient-review","doctor-messages","doctor-profile","doctor-profile-setting","doctor-chat","login","signup","forgot-password","doctor-team-one","doctor-team-two","doctor-team-three"].includes(manu)? "active" : ""} has-submenu parent-parent-menu-item`}>
@@ -297,6 +298,7 @@ export default function Navbar({navDark, manuClass,containerClass}){
                                 <li className={manu === "contact" ? "active" : ""}><Link to="/contact" className="sub-menu-item">Contact</Link></li>
                             </ul>
                         </li>
+                        <li ><Link to="/blogs" >Blogs</Link></li>
                     </ul>
                 </div>
             </div>

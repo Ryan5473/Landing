@@ -12,26 +12,6 @@ export default function DoctorTeamTwo(){
         <>
         <Navbar navDark={true} manuClass="navigation-menu nav-left" containerClass="container"/>
 
-        <section className="bg-half-150 bg-light d-table w-100">
-            <div className="container">
-                <div className="row mt-5 justify-content-center">
-                    <div className="col-12">
-                        <div className="section-title text-center">
-                            <h3 className="sub-title mb-4">Doctors team</h3>
-                            <p className="para-desc mx-auto text-muted">Great doctor if you need your family member to get effective immediate assistance, emergency treatment or a simple consultation.</p>
-                        
-                            <nav aria-label="breadcrumb" className="d-inline-block mt-3">
-                                <ul className="breadcrumb bg-transparent mb-0">
-                                    <li className="breadcrumb-item"><Link to="/">Doctris</Link></li>
-                                    <li className="breadcrumb-item"><Link to="#">Doctors</Link></li>
-                                    <li className="breadcrumb-item active" aria-current="page">Team Two</li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <section className="section">
             <div className="container">
@@ -51,7 +31,7 @@ export default function DoctorTeamTwo(){
                                     <small className="text-muted speciality">{item.speciality}</small>
                                     <div className="d-flex justify-content-between align-items-center mt-2">
                                         <ul className="list-unstyled mb-0">
-                                            <li className="list-inline-item"><i className="mdi mdi-star text-warning"></i></li>
+                                              <li className="list-inline-item"><i className="mdi mdi-star text-warning"></i></li>
                                             <li className="list-inline-item"><i className="mdi mdi-star text-warning"></i></li>
                                             <li className="list-inline-item"><i className="mdi mdi-star text-warning"></i></li>
                                             <li className="list-inline-item"><i className="mdi mdi-star text-warning"></i></li>

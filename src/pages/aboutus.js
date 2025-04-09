@@ -112,7 +112,7 @@ export default function AboutUs(){
                         return(
                         <div className="col-xl-3 col-lg-3 col-md-6 mt-4 pt-2" key={index}>
                             <div className="card team border-0 rounded shadow overflow-hidden">
-                                <div className="team-img position-relative">
+                                <div className="team-img position-relative">    
                                     <img src={item.image} className="img-fluid" alt=""/>
                                     <ul className="list-unstyled team-social mb-0">
                                         <li><Link to="#" className="btn btn-icon btn-pills btn-soft-primary"><FiFacebook className="icons"/></Link></li>

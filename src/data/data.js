@@ -138,7 +138,7 @@ export const doctorData = [
         location: '63, PG Shustoke, UK',
         time: 'Mon: 2:00PM - 6:00PM',
         charges: '$ 75 USD / Visit' 
-    },
+    },  
     {
         image: dr2,
         name: 'Cristino Murphy',
@@ -1256,97 +1256,113 @@ export const productData = [
         id:1,
         image:product1,
         name:'Thermometer',
-        price:'$16.00'
+        price:'$16.00',
+        status:'disponible'
     },
     {
         id:2,
         image:product2,
         name:'Stethoscope',
-        price:'$16.00'
+        price:'$16.00',
+        status:'indisponible'
     },
     {
         id:3,
         image:product3,
         name:'Pulse oximeter',
-        price:'$16.00'
+        price:'$16.00',
+        status:'indisponible'
     },
     {
         id:4,
         image:product4,
         name:'Medicine pills',
-        price:'$16.00'
+        price:'$16.00',
+        status:'disponible'
     },
     {
         id:5,
         image:product5,
         name:'Smokill smoking habit',
-        price:'$16.00'
+        price:'$16.00',
+        status:'disponible'
     },
     {
         id:6,
         image:product6,
         name:'Sanitizer',
-        price:'$16.00'
+        price:'$16.00',
+        status:'disponible'
     },
     {
         id:7,
         image:product7,
         name:'Nicotex',
-        price:'$16.00'
+        price:'$16.00',
+        status:'disponible'
     },
     {
         id:8,
         image:product8,
         name:'Medigrip',
-        price:'$16.00'
+        price:'$16.00',
+        status:'disponible'
     },
     {
         id:9,
         image:product9,
         name:'Face masks',
-        price:'$16.00'
+        price:'$16.00',
+        status:'disponible'
     },
     {
         id:10,
         image:product10,
         name:'Dettol handwash',
-        price:'$16.00'
+        price:'$16.00',
+        status:'disponible'
     },
     {
         id:11,
         image:product11,
         name:'Herbal care product',
-        price:'$16.00'
+        price:'$16.00',
+        status:'disponible'
     },
     {
         id:12,
         image:product12,
         name:'Medical equptment',
-        price:'$16.00'
+        price:'$16.00',
+        status:'disponible'
     },
     {
         id:13,
         image:product13,
         name:'Praganews',
-        price:'$16.00'
+        price:'$16.00',
+        status:'disponible'
     },
     {
         id:14,
         image:product14,
         name:'Ashwagandha churna',
-        price:'$16.00'
+        price:'$16.00',
+        status:'disponible'
     },
     {
         id:15,
         image:product15,
         name:'Beby products',
-        price:'$16.00'
+        price:'$16.00',
+        status:'disponible'
     },
     {
         id:16,
         image:product16,
         name:'Kidney tray',
-        price:'$16.00'
+        price:'$16.00',
+        status:'disponible'
     },
 ]
 export const cartData = [
