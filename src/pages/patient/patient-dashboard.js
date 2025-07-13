@@ -5,7 +5,7 @@ import bg1 from '../../assets/images/bg/bg-chat.png'
 import logoDark from '../../assets/images/logo-dark.png'
 
 import Navbar from "../../components/navbar";
-import PatientSidebar from "../../components/patient/patientSidebar";
+import PatientSidebar from "../../components/patientSidebar";
 
 import AdminFooter from "../../components/dashboard/adminFooter";
 import ScrollTop from "../../components/scrollTop";

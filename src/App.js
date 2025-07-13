@@ -18,6 +18,8 @@ import DoctorProfile from "./pages/dashboard/doctor-profile";
 import DoctorProfileSettimg from "./pages/dashboard/doctor-profile-setting";
 import PatientList from "./pages/dashboard/patient-list";
 import PatientReview from "./pages/dashboard/patient-review";
+import PatientChat from "./pages/dashboard/patient-chat";
+
 import DoctorChat from "./pages/dashboard/doctor-chat";
 import DoctorTeamOne from "./pages/doctor/doctor-team-one";
 import DoctorTeamTwo from "./pages/doctor/doctor-team-two";
@@ -61,6 +63,8 @@ function App() {
       <Route path="/doctor-schedule" element={<DoctorSchedule/>}/>
       <Route path="/invoices" element={<Invoice/>}/>
       <Route path="/doctor-messages" element={<DoctorMessages/>}/>
+      <Route path="/dashboard/patient-chat" element={<PatientChat />} />
+
       <Route path="/doctor-profile" element={<DoctorProfile/>}/>
       <Route path="/doctor-profile-setting" element={<DoctorProfileSettimg/>}/>
       <Route path="/patient-list" element={<PatientList/>}/>

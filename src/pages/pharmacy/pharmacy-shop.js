@@ -1,121 +1,86 @@
-// src/pages/PharmacyShop.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import bg1 from '../../assets/images/bg/pharm01.jpg';
-import bg2 from '../../assets/images/bg/pharm02.jpg';
-import bg3 from '../../assets/images/bg/pharm03.jpg';
-import cta from '../../assets/images/pharmacy/cta.jpg';
-import Counter from '../../components/counter';
+import Navbar from '../../components/navbar';
 import Footer from '../../components/footer';
 import ScrollTop from '../../components/scrollTop';
-import Navbar from '../../components/navbar';
 import { FiHeart, FiEye, FiShoppingCart } from '../../assets/icons/vander';
-import TinySlider from 'tiny-slider-react';
-import 'tiny-slider/dist/tiny-slider.css';
-import { productData, pharmaCategories } from '../../data/data';
-import { useCart } from '../../../src/context/CartContext';
+import { useCart } from '../../context/CartContext';
 
 export default function PharmacyShop() {
-  const settings = {
-    container: '.slider-range-four',
-    items: 4,
-    controls: false,
-    mouseDrag: true,
-    loop: true,
-    rewind: true,
-    autoplay: true,
-    autoplayButtonOutput: false,
-    autoplayTimeout: 3000,
-    navPosition: 'bottom',
-    speed: 400,
-    gutter: 24,
-    responsive: {
-      992: { items: 4 },
-      767: { items: 2 },
-      320: { items: 1 },
-    },
-  };
-
-  const [index, setIndex] = useState(0);
   const { addToCart } = useCart();
+  const [products, setProducts] = useState([]);
 
-  const handleSelect = (selectedIndex) => {
-    setIndex(selectedIndex);
-  };
+  useEffect(() => {
+    fetch('http://localhost:8080/products')
+      .then(res => res.json())
+      .then(data => setProducts(data))
+      .catch(err => console.error('Error fetching products:', err));
+  }, []);
 
   return (
     <>
       <Navbar navDark={true} manuClass="navigation-menu nav-left" containerClass="container" />
+
       <section className="section">
         <div className="container">
+          <h5 className="mb-0">Most Viewed Products</h5>
           <div className="row">
-            <div className="col-12">
-              <h5 className="mb-0">Most Viewed Products</h5>
-            </div>
-          </div>
-
-          <div className="row">
-            {productData.slice(0, 8).map((item, index) => (
-              <div className="col-lg-3 col-md-6 col-12 mt-4 pt-2" key={index}>
+            {products.map(item => (
+              <div className="col-lg-3 col-md-6 col-12 mt-4 pt-2" key={item.id}>
                 <div className="card shop-list border-0 position-relative notify-card">
-                  <ul className="label list-unstyled mb-0">
-                    <li>
-                      <Link to="" className="badge rounded-pill badge-success">Featured</Link>
-                    </li>
-                  </ul>
                   <div className="shop-image position-relative overflow-hidden rounded shadow">
                     <Link to={`/pharmacy-product-detail/${item.id}`}>
-                      <img src={item.image} className="img-fluid" alt="" />
+                      <img src={item.image} className="img-fluid" alt={item.name} />
                     </Link>
+
                     <ul className="list-unstyled shop-icons">
-                      <li><Link to="#" className="btn btn-icon btn-pills btn-soft-danger"><FiHeart className="icons" /></Link></li>
-                      <li className="mt-2"><Link to={`/pharmacy-product-detail/${item.id}`} className="btn btn-icon btn-pills btn-soft-primary"><FiEye className="icons" /></Link></li>
-                      {item.status === 'disponible' ? (
-                        <li className="mt-2">
-                          <button
-                            className="btn btn-icon btn-pills btn-soft-warning"
-                            onClick={() => addToCart(item)}
-                          >
-                            <FiShoppingCart className="icons" />
-                          </button>
-                        </li>
-                      ) : (
-                        <li className="mt-2"><button className="btn btn-icon btn-pills btn-soft-secondary" disabled>Out of Stock</button></li>
-                      )}
+                      <li>
+                        <Link to="#" className="btn btn-icon btn-pills btn-soft-danger"><FiHeart /></Link>
+                      </li>
+                      <li>
+                        <Link to={`/pharmacy-product-detail/${item.id}`} className="btn btn-icon btn-pills btn-soft-primary"><FiEye /></Link>
+                      </li>
+                      <li>
+                        <button
+                          className="btn btn-icon btn-pills btn-soft-warning"
+                          onClick={() => addToCart(item, 1)}
+                          aria-label={`Add ${item.name} to cart`}
+                        >
+                          <FiShoppingCart />
+                        </button>
+                      </li>
                     </ul>
-                    <Counter />
                   </div>
+
                   <div className="card-body content pt-4 p-2">
-                    <Link to={`/pharmacy-product-detail/${item.id}`} className="text-dark product-name h6">{item.name}</Link>
+                    <Link to={`/pharmacy-product-detail/${item.id}`} className="text-dark product-name h6">
+                      {item.name}
+                    </Link>
+
                     <div className="d-flex justify-content-between align-items-center mt-1">
                       <div>
-                        <h6 className="text-muted small font-italic mb-0 mt-1">{item.price}</h6>
+                        <h6 className="text-muted small font-italic mb-0 mt-1">${Number(item.price).toFixed(2)}</h6>
                         <small className={`badge ${item.status === 'disponible' ? 'bg-success' : 'bg-danger'} mt-1`}>
                           {item.status}
                         </small>
                       </div>
-                      <ul className="list-unstyled text-warning mb-0">
-                        {[...Array(5)].map((_, i) => (
-                          <li className="list-inline-item" key={i}><i className="mdi mdi-star"></i></li>
-                        ))}
-                      </ul>
                     </div>
+
+                    {/* Remove counter, just Add to Cart button */}
+                    <button
+                      className="btn btn-sm btn-outline-primary w-100 mt-2"
+                      onClick={() => addToCart(item, 1)}
+                    >
+                      Add to Cart
+                    </button>
                   </div>
-                  {item.status === 'indisponible' ? (
-                    <div className="notify-panel-hover">
-                      <button className="btn btn-sm btn-outline-primary w-100">Notify Me</button>
-                    </div>
-                  ) : item.status === 'disponible' ? (
-                    <div className="notify-panel-hover">
-                      <button className="btn btn-sm btn-outline-primary w-100" onClick={() => addToCart(item)}>Add to Cart</button>
-                    </div>
-                  ) : null}
                 </div>
               </div>
             ))}
           </div>
         </div>
       </section>
+
       <Footer />
       <ScrollTop />
     </>

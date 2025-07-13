@@ -1,33 +1,55 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
+
+// ✅ Assets (images, icons)
 import bg1 from '../../assets/images/bg/bg-chat.png'
 import dr1 from '../../assets/images/doctors/01.jpg'
 import dr2 from '../../assets/images/doctors/02.jpg'
+
+// ✅ Reusable layout components
 import Navbar from "../../components/navbar";
 import Sidebar from "../../components/sidebar";
 import AdminFooter from "../../components/dashboard/adminFooter";
 import ScrollTop from "../../components/scrollTop";
+
+// ✅ 3rd party UI helpers
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css'
 import SimpleSearchBar from '../../components/search'
 import { BiSend, FiClock } from '../../assets/icons/vander'
 
 export default function DoctorChat() {
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [connectionStatus, setConnectionStatus] = useState('connecting');
-  const [selectedPatient, setSelectedPatient] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [patients, setPatients] = useState([]);
-  const [currentRoom, setCurrentRoom] = useState(null);
-  const [show2, setShow2] = useState(false);
-  const wsRef = useRef(null);
+  // ==============================
+  // ✅ STATE & REFERENCES
+  // ==============================
+  const [messages, setMessages] = useState([]); // All messages for current room
+  const [newMessage, setNewMessage] = useState(''); // The input field value
+  const [connectionStatus, setConnectionStatus] = useState('connecting'); // WS status
+  const [selectedPatient, setSelectedPatient] = useState(null); // Currently active patient
+  const [searchTerm, setSearchTerm] = useState(''); // Search bar filter text
+  const [currentRoom, setCurrentRoom] = useState(null); // Joined room ID
+  const [show2, setShow2] = useState(false); // Toggle for search dropdown
+  const wsRef = useRef(null); // Reference to WebSocket connection
 
+  // ✅ Static patient list
+  // In production: replace with a fetch from your backend to get real patient data + status.
+  const [patients, setPatients] = useState([
+    { id: 1, name: "John Doe", status: "online", avatar: dr2 },
+    { id: 2, name: "Jane Smith", status: "offline", avatar: dr2 },
+    { id: 3, name: "Alice Johnson", status: "online", avatar: dr2 },
+    { id: 4, name: "Bob Brown", status: "offline", avatar: dr2 },
+  ]);
+
+  // ==============================
+  // ✅ USE EFFECT: CONNECT WEBSOCKET
+  // ==============================
   useEffect(() => {
+    // Open WebSocket connection to your server
     wsRef.current = new WebSocket('ws://your-server-url');
 
     wsRef.current.onopen = () => {
       setConnectionStatus('connected');
+      // Example: doctor joins a general room or authenticates
       wsRef.current.send(JSON.stringify({
         type: 'join_room',
         room: 'doctor_room'
@@ -36,21 +58,27 @@ export default function DoctorChat() {
 
     wsRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
+
       switch(data.type) {
         case 'message':
+          // Server pushed a new message → add to local list
           setMessages(prev => [...prev, data.message]);
           break;
+
         case 'room_joined':
+          // Server confirms room join success
           setCurrentRoom(data.room);
           break;
-        case 'room_left':
-          setCurrentRoom(null);
+
+        case 'status_update':
+          // Example: server pushes patient status update
+          setPatients(prev =>
+            prev.map(p =>
+              p.id === data.patientId ? { ...p, status: data.status } : p
+            )
+          );
           break;
-        case 'patient_status':
-          setPatients(prev => prev.map(p => 
-            p.id === data.patientId ? {...p, status: data.status} : p
-          ));
-          break;
+
         default:
           console.log('Unknown message type:', data.type);
       }
@@ -63,107 +91,39 @@ export default function DoctorChat() {
 
     wsRef.current.onclose = () => {
       setConnectionStatus('disconnected');
-      handleReconnection();
     };
 
+    // ✅ Cleanup WS on unmount
     return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
+      if (wsRef.current) wsRef.current.close();
     };
   }, []);
 
-  const handleReconnection = () => {
-    const reconnect = () => {
-      setTimeout(() => {
-        if (wsRef.current?.readyState === WebSocket.CLOSED) {
-          wsRef.current = new WebSocket('ws://your-server-url');
-          setupWebSocketHandlers();
-        }
-      }, 5000);
-    };
-    reconnect();
-  };
-
-  const setupWebSocketHandlers = () => {
-    wsRef.current.onopen = () => {
-      setConnectionStatus('connected');
-      wsRef.current.send(JSON.stringify({
-        type: 'join_room',
-        room: 'doctor_room'
-      }));
-    };
-
-    wsRef.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      switch(data.type) {
-        case 'message':
-          setMessages(prev => [...prev, data.message]);
-          break;
-        case 'room_joined':
-          setCurrentRoom(data.room);
-          break;
-        case 'room_left':
-          setCurrentRoom(null);
-          break;
-        case 'patient_status':
-          setPatients(prev => prev.map(p => 
-            p.id === data.patientId ? {...p, status: data.status} : p
-          ));
-          break;
-        default:
-          console.log('Unknown message type:', data.type);
-      }
-    };
-
-    wsRef.current.onerror = (error) => {
-      setConnectionStatus('error');
-      console.error('WebSocket error:', error);
-    };
-
-    wsRef.current.onclose = () => {
-      setConnectionStatus('disconnected');
-      handleReconnection();
-    };
-  };
-
-  const fetchPatients = async (searchTerm) => {
-    try {
-      const response = await fetch(`/api/patients?search=${searchTerm}`);
-      const data = await response.json();
-      setPatients(data.patients);
-    } catch (error) {
-      console.error('Error fetching patients:', error);
-    }
-  };
-
+  // ==============================
+  // ✅ PATIENT SELECT: JOIN ROOM & LOAD HISTORY
+  // ==============================
   const handlePatientSelect = async (patient) => {
-    try {
-      const response = await fetch('/api/rooms', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          patientId: patient.id,
-          doctorId: 'current_doctor_id'
-        })
-      });
-      const roomData = await response.json();
+    setSelectedPatient(patient);
+    setMessages([]); // Clear chat when switching
 
-      wsRef.current.send(JSON.stringify({
-        type: 'join_room',
-        room: roomData.roomId
-      }));
+    const roomId = `room_${patient.id}`;
+    setCurrentRoom(roomId);
 
-      setSelectedPatient(patient);
-      setCurrentRoom(roomData.roomId);
-      setMessages(roomData.messages);
-    } catch (error) {
-      console.error('Error creating/joining room:', error);
-    }
+    // 👉 If you have REST API, fetch old messages for this room:
+    // const res = await fetch(`/api/rooms/${roomId}/messages`);
+    // const oldMsgs = await res.json();
+    // setMessages(oldMsgs);
+
+    // Tell backend to join room
+    wsRef.current.send(JSON.stringify({
+      type: 'join_room',
+      room: roomId
+    }));
   };
 
+  // ==============================
+  // ✅ SEND MESSAGE TO PATIENT
+  // ==============================
   const handleSendMessage = () => {
     if (!newMessage.trim() || !currentRoom) return;
 
@@ -174,23 +134,41 @@ export default function DoctorChat() {
       roomId: currentRoom
     };
 
+    // Push to server (will be saved + broadcast to room)
     wsRef.current.send(JSON.stringify({
       type: 'message',
       ...message
     }));
 
+    // Optimistic update → show immediately in chat
+    setMessages(prev => [...prev, message]);
     setNewMessage('');
   };
 
+  // ==============================
+  // ✅ FILTERED PATIENT LIST
+  // ==============================
+  const filteredPatients = patients.filter(p =>
+    p.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <>
+      {/* ==============================
+          ✅ Navbar & Sidebar Layout 
+      ============================== */}
       <Navbar navDark={true} manuClass="navigation-menu nav-left" containerClass="container-fluid"/>
       <section className="bg-dashboard">
         <div className="container-fluid">
           <div className="row">
             <Sidebar colClass="col-xl-3 col-lg-4 col-md-5 col-12 d-none d-lg-block"/>
+
             <div className="col-xl-9 col-lg-8 mt-4 pt-2 mt-sm-0 pt-sm-0">
               <div className="row">
+
+                {/* ==============================
+                    ✅ LEFT: Patients List Panel
+                ============================== */}
                 <div className="col-xl-3 col-lg-5 col-md-5 col-12">
                   <div className="card border-0 rounded shadow">
                     <div className="text-center p-4 border-bottom">
@@ -198,16 +176,21 @@ export default function DoctorChat() {
                       <h5 className="mt-3 mb-1">Dr. Calvin Carlo</h5>
                       <p className="text-muted mb-0">Orthopedic</p>
                     </div>
+
+                    {/* Search input */}
                     <SimpleSearchBar 
                       onSearch={setSearchTerm}
                       placeholder="Search patients..."
                     />
+
+                    {/* Patients list */}
                     <SimpleBar className="p-2 chat chat-list" style={{maxHeight:'450px'}}>
-                      {patients.map((patient) => (
+                      {filteredPatients.map((patient) => (
                         <div 
                           key={patient.id}
                           className="patient-item"
                           onClick={() => handlePatientSelect(patient)}
+                          style={{cursor:'pointer', padding:'8px', borderBottom:'1px solid #eee'}}
                         >
                           <div className="d-flex align-items-center">
                             <img 
@@ -229,52 +212,29 @@ export default function DoctorChat() {
                     </SimpleBar>
                   </div>
                 </div>
+
+                {/* ==============================
+                    ✅ RIGHT: Chat Panel
+                ============================== */}
                 <div className="col-xl-9 col-lg-7 col-md-7 col-12 mt-4 pt-2 mt-sm-0 pt-sm-0">
                   <div className="card chat chat-person border-0 shadow rounded">
                     <div className="d-flex justify-content-between border-bottom p-4">
                       <div className="d-flex">
-                        <img src={dr2} className="avatar avatar-md-sm rounded-circle border shadow" alt=""/>
+                        <img src={selectedPatient?.avatar || dr2} className="avatar avatar-md-sm rounded-circle border shadow" alt=""/>
                         <div className="overflow-hidden ms-3">
                           <h6 className="text-dark mb-0 h6 d-block text-truncate">
                             {selectedPatient?.name || 'Select a patient'}
                           </h6>
                           <small className="text-muted">
                             <i className={`mdi mdi-checkbox-blank-circle ${selectedPatient?.status === 'online' ? 'text-success' : 'text-danger'} on-off align-text-bottom`}></i>
-                            {selectedPatient?.status || 'Select a patient'}
+                            {selectedPatient?.status || ''}
                           </small>
                         </div>
                       </div>
-                      <ul className="list-unstyled mb-0">
-                        <li className="dropdown dropdown-primary list-inline-item">
-                          <button 
-                            type="button" 
-                            className="btn btn-icon btn-pills btn-primary dropdown-toggle p-0"
-                            onClick={() => setShow2(!show2)}
-                          >
-                            <i className="mdi mdi-magnify"></i>
-                          </button>
-                          <div 
-                            className={`dropdown-menu dd-menu dropdown-menu-end bg-white shadow rounded border-0 mt-3 py-0 ${show2 ? 'show' : ''}`}
-                            style={{width:'200px', right:'0'}}
-                          >
-                            <form>
-                              <input 
-                                type="text" 
-                                id="text1" 
-                                name="name" 
-                                className="form-control border bg-white"
-                                placeholder="Search patients..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                              />
-                            </form>
-                          </div>
-                        </li>
-                      </ul>
                     </div>
-                    <SimpleBar 
-                      style={{backgroundImage:`url(${bg1})`,maxHeight:'500px', backgroundPosition:'center'}}
-                    >
+
+                    {/* Chat messages */}
+                    <SimpleBar style={{backgroundImage:`url(${bg1})`,maxHeight:'500px', backgroundPosition:'center'}}>
                       <ul className="p-4 list-unstyled mb-0 chat">
                         {messages.map((message, index) => (
                           <li key={index} className={`message ${message.sender === 'doctor' ? 'chat-right' : ''}`}>
@@ -282,7 +242,7 @@ export default function DoctorChat() {
                               <div className="d-flex chat-type mb-3">
                                 <div className="position-relative">
                                   <img 
-                                    src={message.sender === 'doctor' ? dr1 : dr2} 
+                                    src={message.sender === 'doctor' ? dr1 : selectedPatient?.avatar} 
                                     className="avatar avatar-md-sm rounded-circle border shadow" 
                                     alt=""
                                   />
@@ -303,6 +263,8 @@ export default function DoctorChat() {
                         ))}
                       </ul>
                     </SimpleBar>
+
+                    {/* Message input */}
                     <div className="p-2 rounded-bottom shadow">
                       <div className="row">
                         <div className="col">
@@ -325,13 +287,17 @@ export default function DoctorChat() {
                         </div>
                       </div>
                     </div>
+
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* ✅ Footer & ScrollTop */}
       <AdminFooter/>
       <ScrollTop/>
     </>

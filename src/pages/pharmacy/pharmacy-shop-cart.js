@@ -1,131 +1,313 @@
 // src/pages/ShopCart.js
+
+/*
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/navbar';
-import CounterTwo from '../../components/counterTwo';
 import Footer from '../../components/footer';
 import ScrollTop from '../../components/scrollTop';
-import { LiaTimesSolid } from '../../assets/icons/vander';
-import { useCart } from '../../../src/context/CartContext';
+import { useCart } from '../../context/CartContext';
 
 export default function ShopCart() {
-  const { cart, updateQuantity } = useCart();
+  const { cart, updateQuantity, removeItem } = useCart();
 
-  // Calculate totals
-  const subtotal = cart.reduce((sum, item) => sum + item.priceTwo, 0);
-  const taxes = subtotal * 0.1; // Assuming 10% tax rate
+  const subtotal = cart.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
+  const taxes = subtotal * 0.1;
   const total = subtotal + taxes;
+
+  const increment = (item) => {
+    updateQuantity(item.name, item.quantity + 1);
+  };
+
+  const decrement = (item) => {
+    if (item.quantity > 1) {
+      updateQuantity(item.name, item.quantity - 1);
+    }
+  };
 
   return (
     <>
       <Navbar navDark={true} manuClass="navigation-menu nav-left" containerClass="container" />
-      <section className="bg-half-170 d-table w-100 bg-light">
-        <div className="container">
-          <div className="row mt-5 justify-content-center">
-            <div className="col-12">
-              <div className="section-title text-center">
-                <h3 className="sub-title mb-4">Shop Cart</h3>
-                <p className="para-desc mx-auto text-muted">
-                  Great doctor if you need your family member to get effective immediate assistance, emergency treatment or a simple consultation.
-                </p>
-                <nav aria-label="breadcrumb" className="d-inline-block mt-3">
-                  <ul className="breadcrumb bg-light rounded mb-0 bg-transparent">
-                    <li className="breadcrumb-item"><Link to="/">Doctris</Link></li>
-                    <li className="breadcrumb-item"><Link to="/pharmacy">Pharmacy</Link></li>
-                    <li className="breadcrumb-item active" aria-current="page">Shop Cart</li>
-                  </ul>
-                </nav>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <div className="position-relative">
-        <div className="shape overflow-hidden text-color-white">
-          <svg viewBox="0 0 2880 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 48H1437.5H2880V0H2160C1442.5 52 720 0 720 0H0V48Z" fill="currentColor"></path>
-          </svg>
-        </div>
-      </div>
 
       <section className="section">
         <div className="container">
-          <div className="row">
-            <div className="col-12">
-              <div className="table-responsive bg-white shadow rounded">
-                <table className="table table-center table-padding mb-0">
-                  <thead>
-                    <tr>
-                      <th className="border-bottom p-3" style={{ minWidth: '20px' }}></th>
-                      <th className="border-bottom p-3" style={{ minWidth: '300px' }}>Product</th>
-                      <th className="border-bottom text-center p-3" style={{ minWidth: '160px' }}>Price</th>
-                      <th className="border-bottom text-center p-3" style={{ minWidth: '190px' }}>Qty</th>
-                      <th className="border-bottom text-end p-3" style={{ minWidth: '50px' }}>Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {cart.map((item, index) => (
-                      <tr key={index}>
-                        <td className="h5 p-3 text-center">
+          <h3>Your Cart</h3>
+
+          {cart.length === 0 ? (
+            <p>Your cart is empty.</p>
+          ) : (
+            <>
+              <table className="table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #ddd' }}>
+                    <th style={{ padding: '8px' }}>Remove</th>
+                    <th style={{ padding: '8px' }}>Product</th>
+                    <th style={{ padding: '8px', textAlign: 'center' }}>Price</th>
+                    <th style={{ padding: '8px', textAlign: 'center' }}>Quantity</th>
+                    <th style={{ padding: '8px', textAlign: 'right' }}>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cart.map(item => (
+                    <tr key={item.name} style={{ borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '8px', textAlign: 'center' }}>
+                        <button
+                          onClick={() => removeItem(item.name)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'red',
+                            cursor: 'pointer',
+                            fontSize: '16px',
+                          }}
+                          aria-label={`Remove ${item.name}`}
+                        >
+                          &#x2715;
+                        </button>
+                      </td>
+                      <td style={{ padding: '8px' }}>{item.name}</td>
+                      <td style={{ padding: '8px', textAlign: 'center' }}>${Number(item.price).toFixed(2)}</td>
+                      <td style={{ padding: '8px', textAlign: 'center' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center' }}>
                           <button
-                            className="text-danger bg-transparent border-0"
-                            onClick={() => updateQuantity(item.id, 0)}
+                            onClick={() => decrement(item)}
+                            disabled={item.quantity <= 1}
+                            style={{
+                              padding: '4px 8px',
+                              cursor: item.quantity <= 1 ? 'not-allowed' : 'pointer',
+                            }}
                           >
-                            <LiaTimesSolid />
+                            -
                           </button>
-                        </td>
-                        <td className="p-3">
-                          <div className="d-flex align-items-center">
-                            <img src={item.image} className="img-fluid avatar avatar-small rounded shadow" style={{ height: 'auto' }} alt="" />
-                            <h6 className="mb-0 ms-3">{item.name}</h6>
-                          </div>
-                        </td>
-                        <td className="text-center p-3">{item.price}</td>
-                        <td className="text-center shop-list p-3">
-                          <CounterTwo
-                            quantity={item.quantity}
-                            onQuantityChange={(newQuantity) => updateQuantity(item.id, newQuantity)}
+                          <input
+                            type="text"
+                            readOnly
+                            value={item.quantity}
+                            style={{
+                              width: '40px',
+                              textAlign: 'center',
+                              margin: '0 5px',
+                              border: '1px solid #ccc',
+                              borderRadius: '4px',
+                              padding: '4px 0',
+                            }}
                           />
-                        </td>
-                        <td className="text-end font-weight-bold p-3">{item.priceTwo}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-lg-8 col-md-6 mt-4 pt-2">
-              <Link to="/pharmacy" className="btn btn-primary">Shop More</Link>
-              <Link to="#" className="btn btn-soft-primary ms-2">Update Cart</Link>
-            </div>
-            <div className="col-lg-4 col-md-6 ms-auto mt-4 pt-2">
-              <div className="table-responsive bg-white rounded shadow">
-                <table className="table table-center table-padding mb-0">
-                  <tbody>
-                    <tr>
-                      <td className="h6 p-3">Subtotal</td>
-                      <td className="text-end font-weight-bold p-3">$ {subtotal}</td>
+                          <button
+                            onClick={() => increment(item)}
+                            style={{ padding: '4px 8px', cursor: 'pointer' }}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </td>
+                      <td style={{ padding: '8px', textAlign: 'right' }}>
+                        ${(Number(item.price) * item.quantity).toFixed(2)}
+                      </td>
                     </tr>
-                    <tr>
-                      <td className="h6 p-3">Taxes</td>
-                      <td className="text-end font-weight-bold p-3">$ {taxes}</td>
-                    </tr>
-                    <tr className="bg-light">
-                      <td className="h6 p-3">Total</td>
-                      <td className="text-end font-weight-bold p-3">$ {total}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                  ))}
+                </tbody>
+              </table>
+
+              <div style={{ marginTop: '20px', textAlign: 'right' }}>
+                <p>Subtotal: <strong>${subtotal.toFixed(2)}</strong></p>
+                <p>Taxes (10%): <strong>${taxes.toFixed(2)}</strong></p>
+                <p>Total: <strong>${total.toFixed(2)}</strong></p>
+                <Link
+                  to="#"
+                  style={{
+                    display: 'inline-block',
+                    marginTop: '10px',
+                    padding: '10px 20px',
+                    backgroundColor: '#007bff',
+                    color: '#fff',
+                    textDecoration: 'none',
+                    borderRadius: '5px',
+                  }}
+                >
+                  Proceed to Checkout
+                </Link>
               </div>
-              <div className="mt-4 pt-2 text-end">
-                <Link to="#" className="btn btn-primary">Proceed to checkout</Link>
-              </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
       </section>
+
+      <Footer />
+      <ScrollTop />
+    </>
+  );
+}
+*/
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import Navbar from '../../components/navbar';
+import Footer from '../../components/footer';
+import ScrollTop from '../../components/scrollTop';
+import { useCart } from '../../context/CartContext';
+
+export default function ShopCart() {
+  const { cart, updateQuantity, removeItem } = useCart();
+  const [loading, setLoading] = useState(false);
+
+  const subtotal = cart.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
+  const taxes = subtotal * 0.1;
+  const total = subtotal + taxes;
+
+  const increment = (item) => {
+    updateQuantity(item.name, item.quantity + 1);
+  };
+
+  const decrement = (item) => {
+    if (item.quantity > 1) {
+      updateQuantity(item.name, item.quantity - 1);
+    }
+  };
+
+  // Checkout button handler
+  const handleCheckout = async () => {
+    setLoading(true);
+    try {
+      // Prepare items array matching backend DTO
+      const items = cart.map(item => ({
+        name: item.name,
+        amount: Math.round(Number(item.price) * 100), // cents
+        quantity: item.quantity,
+        currency: "usd", // adjust if needed
+      }));
+
+      const response = await fetch('http://localhost:8081/api/stripe/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url; // Redirect to Stripe checkout
+      } else {
+        alert('Failed to get checkout URL from server.');
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('Checkout failed. Please try again later.');
+    }
+    setLoading(false);
+  };
+
+  return (
+    <>
+      <Navbar navDark={true} manuClass="navigation-menu nav-left" containerClass="container" />
+
+      <section className="section">
+        <div className="container">
+          <h3>Your Cart</h3>
+
+          {cart.length === 0 ? (
+            <p>Your cart is empty.</p>
+          ) : (
+            <>
+              <table className="table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #ddd' }}>
+                    <th style={{ padding: '8px' }}>Remove</th>
+                    <th style={{ padding: '8px' }}>Product</th>
+                    <th style={{ padding: '8px', textAlign: 'center' }}>Price</th>
+                    <th style={{ padding: '8px', textAlign: 'center' }}>Quantity</th>
+                    <th style={{ padding: '8px', textAlign: 'right' }}>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cart.map(item => (
+                    <tr key={item.name} style={{ borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '8px', textAlign: 'center' }}>
+                        <button
+                          onClick={() => removeItem(item.name)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'red',
+                            cursor: 'pointer',
+                            fontSize: '16px',
+                          }}
+                          aria-label={`Remove ${item.name}`}
+                        >
+                          &#x2715;
+                        </button>
+                      </td>
+                      <td style={{ padding: '8px' }}>{item.name}</td>
+                      <td style={{ padding: '8px', textAlign: 'center' }}>${Number(item.price).toFixed(2)}</td>
+                      <td style={{ padding: '8px', textAlign: 'center' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                          <button
+                            onClick={() => decrement(item)}
+                            disabled={item.quantity <= 1}
+                            style={{
+                              padding: '4px 8px',
+                              cursor: item.quantity <= 1 ? 'not-allowed' : 'pointer',
+                            }}
+                          >
+                            -
+                          </button>
+                          <input
+                            type="text"
+                            readOnly
+                            value={item.quantity}
+                            style={{
+                              width: '40px',
+                              textAlign: 'center',
+                              margin: '0 5px',
+                              border: '1px solid #ccc',
+                              borderRadius: '4px',
+                              padding: '4px 0',
+                            }}
+                          />
+                          <button
+                            onClick={() => increment(item)}
+                            style={{ padding: '4px 8px', cursor: 'pointer' }}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </td>
+                      <td style={{ padding: '8px', textAlign: 'right' }}>
+                        ${(Number(item.price) * item.quantity).toFixed(2)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              <div style={{ marginTop: '20px', textAlign: 'right' }}>
+                <p>Subtotal: <strong>${subtotal.toFixed(2)}</strong></p>
+                <p>Taxes (10%): <strong>${taxes.toFixed(2)}</strong></p>
+                <p>Total: <strong>${total.toFixed(2)}</strong></p>
+                <button
+                  onClick={handleCheckout}
+                  disabled={loading || cart.length === 0}
+                  style={{
+                    display: 'inline-block',
+                    marginTop: '10px',
+                    padding: '10px 20px',
+                    backgroundColor: '#007bff',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: loading || cart.length === 0 ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {loading ? 'Processing...' : 'Proceed to Checkout'}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+
       <Footer />
       <ScrollTop />
     </>

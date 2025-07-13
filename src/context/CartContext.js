@@ -1,51 +1,46 @@
 // src/context/CartContext.js
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
 
-  const addToCart = (product) => {
+  // Add product or increase quantity if exists based on product.name
+  const addToCart = (product, quantity = 1) => {
     setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === product.id);
-      if (existingItem) {
-        return prevCart.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1, priceTwo: (item.quantity + 1) * item.price }
+      const existingProduct = prevCart.find(item => item.name === product.name);
+
+      if (existingProduct) {
+        return prevCart.map(item =>
+          item.name === product.name
+            ? { ...item, quantity: item.quantity + quantity }
             : item
         );
+      } else {
+        return [...prevCart, { ...product, quantity }];
       }
-      return [
-        ...prevCart,
-        {
-          id: product.id,
-          name: product.name,
-          image: product.image,
-          price: product.price,
-          priceTwo: product.price, // Initial total = price * 1
-          quantity: 1,
-        },
-      ];
     });
   };
 
-  const updateQuantity = (id, quantity) => {
-    if (quantity < 1) {
-      setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+  const updateQuantity = (name, quantity) => {
+    if (quantity <= 0) {
+      removeItem(name);
     } else {
-      setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.id === id
-            ? { ...item, quantity, priceTwo: item.price * quantity }
-            : item
+      setCart(prev =>
+        prev.map(item =>
+          item.name === name ? { ...item, quantity } : item
         )
       );
     }
   };
 
+  const removeItem = (name) => {
+    setCart(prev => prev.filter(item => item.name !== name));
+  };
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, updateQuantity }}>
+    <CartContext.Provider value={{ cart, addToCart, updateQuantity, removeItem }}>
       {children}
     </CartContext.Provider>
   );
