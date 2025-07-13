@@ -255,6 +255,7 @@ export default function Navbar({navDark, manuClass,containerClass}){
                                 <li className={manu === "doctor-team-one" ? "active" : ""}><Link to="/doctor-team-one" className="sub-menu-item">Doctors One</Link></li>
                                 <li className={manu === "doctor-team-two" ? "active" : ""}><Link to="/doctor-team-two" className="sub-menu-item">Doctors Two</Link></li>
                                 <li className={manu === "doctor-team-three" ? "active" : ""}><Link to="/doctor-team-three" className="sub-menu-item">Doctors Three</Link></li>
+                                  <li className={manu === "dashph" ? "active" : ""}><Link to="/dashph" className="sub-menu-item">dashPh</Link></li>
                             </ul>
                         </li>
 

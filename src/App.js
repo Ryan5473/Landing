@@ -44,6 +44,7 @@ import Contact from "./pages/contact";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
 import ForgotPassword from "./pages/forgot-password";
+import DashPh from "./pages/dashboard/pharmacy-dashboard";
 
 
 function App() {
@@ -52,6 +53,8 @@ function App() {
       <Route path="/" element={<Index/>}/>
       <Route path="/index" element={<Index/>}/>
       <Route path="/index-two" element={<IndexTwo/>}/>
+     <Route path="/dashph" element={<DashPh/>}/>
+
       <Route path="/index-three" element={<IndexThree/>}/>
       <Route path="/doctor-dashboard" element={<DoctorDashBoard/>}/>
       <Route path="/doctor-appointment" element={<DoctorAppointment/>}/>

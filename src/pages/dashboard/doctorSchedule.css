@@ -1,0 +1,103 @@
+/* Scrollable hours container */
+.merged-hour-container {
+  margin-top: 8px;
+  padding: 10px 14px;
+  background-color: #f4f8fc;
+  border-radius: 10px;
+  max-height: 140px;
+  overflow-y: auto;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #cfe3f9;
+  font-family: 'Segoe UI', sans-serif;
+  color: #222;
+  scrollbar-width: thin;
+  scrollbar-color: #aac6e4 transparent;
+}
+
+.merged-hour-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.merged-hour-container::-webkit-scrollbar-thumb {
+  background-color: #aac6e4;
+  border-radius: 3px;
+}
+
+/* Time slot styles */
+.available-hour,
+.unavailable-hour {
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  margin: 6px 0;
+  border-radius: 5px;
+  display: block;
+  white-space: normal;
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: background-color 0.2s ease-in-out;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.4;
+}
+
+/* Green for available */
+.available-hour {
+  background-color: #daf5e7;
+  color: #106e3c;
+  border-left: 4px solid #2ecc71;
+}
+
+/* Muted red for unavailable */
+.unavailable-hour {
+  background-color: #ffe6e6;
+  color: #912d2d;
+  border-left: 4px solid #e74c3c;
+}
+
+/* Reserved event container */
+.reserved-event-content {
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  background-color: #fff;
+  border: 1px solid #d3e5f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  color: #1e1e1e;
+  line-height: 1.6;
+}
+
+/* Reserved event title */
+.reserved-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #0d3c61;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* Available event */
+.available-event-content {
+  background-color: #d1f3ef;
+  color: #00695c;
+  padding: 8px 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.78rem;
+  border-left: 4px solid #20bf6b;
+}
+
+/* Normal (info/holiday/etc.) event */
+.normal-event-content {
+  background-color: #ddefff;
+  color: #174785;
+  padding: 8px 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.78rem;
+  border-left: 4px solid #3498db;
+}
